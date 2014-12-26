@@ -1,5 +1,6 @@
 require 'crak/download_task'
 require 'crak/unzip_task'
+require 'crak/compilation_task'
 
 module Crak
   module DSL
@@ -9,6 +10,10 @@ module Crak
 
     def unzip(*args, &block)
       Crak::UnzipTask.define_task(*args, &block)
+    end
+
+    def compile(*args, &block)
+      Crak::CompilationTask.define_task(*args, &block)
     end
   end
 end
