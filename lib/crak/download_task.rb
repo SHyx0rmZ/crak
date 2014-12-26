@@ -1,37 +1,25 @@
-require 'rake/task'
 require 'net/http'
 require 'fileutils'
 require 'uri'
 require 'time'
+require 'crak/parameterized_task'
 
 module Crak
-  class DownloadTask < Rake::Task
-    def self.define_task *args, &block
-      task_name, download_data, *rest = resolve_args(args)
-
-      unless download_data.is_a?(Hash)
-        fail "Don't know what to download in task '#{task_name}'"
+  class DownloadTask < ParameterizedTask
+    def self.define_parameterized_task parameters, *args, &block
+      unless parameters.is_a?(Hash)
+        fail "Don't know what to download in task '#{args.first}'"
       end
 
-      task = super task_name, *rest, &block
+      task = super(parameters, *args, &block)
 
-      task.set_download_data(download_data)
+      task.set_download_data(parameters)
       task.enhance { |t| t.execute_download }
-    end
-
-    def self.resolve_args(args)
-      ary = Rake.application.resolve_args(args)
-
-      [ *ary.shift, { ary.shift => ary.shift } ]
     end
 
     def set_download_data data
       @url = URI(data.keys.first)
       @file_name = data.values.first
-    end
-
-    def enhance deps = nil, &block
-      super deps, &block
     end
 
     def needed?
