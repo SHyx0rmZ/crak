@@ -7,7 +7,7 @@ require 'time'
 module Crak
   class DownloadTask < Rake::Task
     def self.define_task *args, &block
-      task_name, download_data, rest = *args
+      task_name, download_data, *rest = resolve_args(args)
 
       unless download_data.is_a?(Hash)
         fail "Don't know what to download in task '#{task_name}'"
@@ -17,6 +17,12 @@ module Crak
 
       task.set_download_data(download_data)
       task.enhance { |t| t.execute_download }
+    end
+
+    def self.resolve_args(args)
+      ary = Rake.application.resolve_args(args)
+
+      [ *ary.shift, { ary.shift => ary.shift } ]
     end
 
     def set_download_data data
