@@ -5,7 +5,7 @@ module Crak
     def self.define_parameterized_task params, *args, &block
       super(params, *args, &block)
       .enhance { |t| t.execute_compilation }
-      .istance_eval { set_parameters(params) }
+      .instance_eval { set_parameters(params) }
     end
 
     def set_parameters(params)
